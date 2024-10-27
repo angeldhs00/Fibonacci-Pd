@@ -27,19 +27,20 @@ class VentanaFib(tk.Frame):
         # atributos
     
         # colocar en el centro de la pantalla
-        raiz_width = 600
+        raiz_width = 500
         raiz_height = 450
         cent_x = int((self.master.winfo_screenwidth() - raiz_width)/2) 
         cent_y = int((self.master.winfo_screenheight() - raiz_height)/2)
         self.master.geometry(f"{raiz_width}x{raiz_height}+{cent_x}+{cent_y}")
         
         # disposición de la ventana
-        self.master.columnconfigure(0, weight = 6)
-        self.master.columnconfigure(1, weight = 4)
+        self.master.columnconfigure(0, weight = 1, uniform="c1")
+        self.master.columnconfigure(1, weight = 1, uniform="c1")
         
-        self.master.rowconfigure(0, weight = 2)
-        self.master.rowconfigure(1, weight = 4)
-        self.master.rowconfigure(2, weight = 4)
+        self.master.rowconfigure(0, weight = 2, uniform="r1")
+        self.master.rowconfigure(1, weight = 1, uniform="r1")
+        self.master.rowconfigure(2, weight = 1, uniform="r1")
+        self.master.rowconfigure(2, weight = 8, uniform="r1")
         
         # Se crean los widgets
         self.widgets()
@@ -55,10 +56,32 @@ class VentanaFib(tk.Frame):
         None.
 
         """
+        # PORTADA
+        # imagen
+        img = Image.open("portada.jpg")
+        rz_img_port = img.resize((500, 80))
+        self.img_port = ImageTk.PhotoImage(rz_img_port)
         
-        self.img_port = ImageTk.PhotoImage(Image.open("portada.jpeg"))
-        lb_img_port = tk.Label(self.master, image=self.img_port)
-        lb_img_port.grid(row=0, column=0,columnspan=2, sticky='nsew')
+        # lienzo
+        canvas = tk.Canvas(self.master)
+        canvas.create_image(0, 0, image = self.img_port, anchor='nw')
+        canvas.create_text(100,35,text="FIBONACCI", font=("Times New Roman",20),
+                           fill='white')
+        canvas.grid(row=0, column=0, columnspan=2, sticky='nsew')# se coloca el lienzo
+        
+        # NÚMERO DEL TÉRMINO DE LA SUCESIÓN
+        lb_n = tk.Label(self.master,text="Termino de la sucesión a calcular:",
+                        font=('Calibri',12),background='SteelBlue3')
+        lb_n.grid(row=1, column=0, sticky='se')
+        
+        n = tk.Entry(self.master,width= 6)
+        n.grid(row=1, column=1, padx=10, sticky='sw')
+        
+        
+        lb_n1 = tk.Label(self.master,text="Estrategia:",
+                         font=('Calibri',12),background='SteelBlue3')
+        lb_n1.grid(row=2, column=0, sticky='sw')
+        
         
 
 
@@ -72,9 +95,13 @@ if __name__ == '__main__':
     # titulo de la ventana
     raiz.title('Sucesión de Fibonacci!!')
     
+    # color de fondo
+    raiz.configure(background='SteelBlue3')
+    
     # ventana no reescalable
     raiz.resizable(False,False)
     
+    # icono
     img_icon= ImageTk.PhotoImage(Image.open("fibonacci.png"))
     raiz.iconphoto(False,img_icon,img_icon)
     

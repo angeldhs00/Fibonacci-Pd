@@ -7,6 +7,7 @@ Interfaz gráfica para visualizar los términos de fibonacci.
 @author: Angel de Hoyos Sainz
 """
 import tkinter as tk 
+from tkinter import ttk
 from PIL import Image, ImageTk
 
 class VentanaFib(tk.Frame):
@@ -37,10 +38,12 @@ class VentanaFib(tk.Frame):
         self.master.columnconfigure(0, weight = 1, uniform="c1")
         self.master.columnconfigure(1, weight = 1, uniform="c1")
         
-        self.master.rowconfigure(0, weight = 2, uniform="r1")
-        self.master.rowconfigure(1, weight = 1, uniform="r1")
-        self.master.rowconfigure(2, weight = 1, uniform="r1")
-        self.master.rowconfigure(2, weight = 8, uniform="r1")
+        self.master.rowconfigure(0, weight = 18, uniform="r1")
+        self.master.rowconfigure(1, weight = 11, uniform="r1")
+        self.master.rowconfigure(2, weight = 11, uniform="r1")
+        self.master.rowconfigure(3, weight = 11, uniform="r1")
+        self.master.rowconfigure(4, weight = 50, uniform="r1")
+        self.master.rowconfigure(5, weight = 2, uniform="r1")
         
         # Se crean los widgets
         self.widgets()
@@ -78,11 +81,33 @@ class VentanaFib(tk.Frame):
         n.grid(row=1, column=1, padx=10, sticky='sw')
         
         
-        lb_n1 = tk.Label(self.master,text="Estrategia:",
+        lb_n1 = tk.Label(self.master,text="Estrategia de programación:",
                          font=('Calibri',12),background='SteelBlue3')
-        lb_n1.grid(row=2, column=0, sticky='sw')
+        lb_n1.grid(row=2, column=0, padx=22, sticky='w')
         
+        estrategia = ttk.Combobox(self.master,values=['TopDown','BottomUp'],
+                                  state="readonly",width=10)
+        estrategia.set("TopDown")
+        estrategia.grid(row=2, column=1, padx=10, sticky='w')
         
+        bt_apply = tk.Button(self.master, text='Aplicar',width=20,
+                             command= lambda: self.aplicarPD(int(n.get()),
+                                                            estrategia.get()))
+        bt_apply.grid(row=3, columnspan=2,padx=170, sticky='w')
+        
+        esquema = tk.Text(self.master,state='disabled',width= 85,borderwidth=3,
+                           height=20)
+        esquema.grid(row=4, columnspan=2,padx=5, sticky='nw')
+        
+    
+    # def aplicarPD(self,n,estrategia):
+    #     if estrategia == 'Topdown':
+            
+    #     else:
+            
+
+
+
 
 
 

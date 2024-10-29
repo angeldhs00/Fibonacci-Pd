@@ -9,6 +9,7 @@ Interfaz gráfica para visualizar los términos de fibonacci.
 import tkinter as tk 
 from tkinter import ttk
 from PIL import Image, ImageTk
+from Fibonacci import fibonacciTopDown,fibonacciBottomUp
 
 class VentanaFib(tk.Frame):
     
@@ -39,11 +40,12 @@ class VentanaFib(tk.Frame):
         self.master.columnconfigure(1, weight = 1, uniform="c1")
         
         self.master.rowconfigure(0, weight = 18, uniform="r1")
-        self.master.rowconfigure(1, weight = 11, uniform="r1")
-        self.master.rowconfigure(2, weight = 11, uniform="r1")
-        self.master.rowconfigure(3, weight = 11, uniform="r1")
+        self.master.rowconfigure(1, weight = 9, uniform="r1")
+        self.master.rowconfigure(2, weight = 9, uniform="r1")
+        self.master.rowconfigure(3, weight = 9, uniform="r1")
         self.master.rowconfigure(4, weight = 50, uniform="r1")
-        self.master.rowconfigure(5, weight = 2, uniform="r1")
+        self.master.rowconfigure(5, weight = 8, uniform="r1")
+        self.master.rowconfigure(6, weight = 1, uniform="r1")
         
         # Se crean los widgets
         self.widgets()
@@ -75,7 +77,7 @@ class VentanaFib(tk.Frame):
         # NÚMERO DEL TÉRMINO DE LA SUCESIÓN
         lb_n = tk.Label(self.master,text="Termino de la sucesión a calcular:",
                         font=('Calibri',12),background='SteelBlue3')
-        lb_n.grid(row=1, column=0, sticky='se')
+        lb_n.grid(row=1, column=0, padx=5, sticky='se')
         
         n = tk.Entry(self.master,width= 6)
         n.grid(row=1, column=1, padx=10, sticky='sw')
@@ -83,28 +85,53 @@ class VentanaFib(tk.Frame):
         
         lb_n1 = tk.Label(self.master,text="Estrategia de programación:",
                          font=('Calibri',12),background='SteelBlue3')
-        lb_n1.grid(row=2, column=0, padx=22, sticky='w')
+        lb_n1.grid(row=2, column=0, padx=21, sticky='w')
         
         estrategia = ttk.Combobox(self.master,values=['TopDown','BottomUp'],
                                   state="readonly",width=10)
-        estrategia.set("TopDown")
-        estrategia.grid(row=2, column=1, padx=10, sticky='w')
+        estrategia.set("BottomUp")
+        estrategia.grid(row=2, column=1,columnspan=2,padx=10, sticky='w')
         
-        bt_apply = tk.Button(self.master, text='Aplicar',width=20,
+        lb_Fn = tk.Label(self.master,text="Fn =",
+                         font=('Calibri',12),background='SteelBlue3')
+        lb_Fn.grid(row=3, column=0,padx =23, sticky='w')
+        
+        self.entry_Fn = tk.Entry(self.master,width= 6,state='disabled')
+        self.entry_Fn.grid(row=3, column = 0,columnspan=2,padx= 60, sticky='w')
+        
+        bt_apply = tk.Button(self.master, text='Aplicar',width=10,
                              command= lambda: self.aplicarPD(int(n.get()),
                                                             estrategia.get()))
-        bt_apply.grid(row=3, columnspan=2,padx=170, sticky='w')
+        bt_apply.grid(row=5, column = 0,columnspan=2,sticky='s')
         
-        esquema = tk.Text(self.master,state='disabled',width= 85,borderwidth=3,
-                           height=20)
-        esquema.grid(row=4, columnspan=2,padx=5, sticky='nw')
+        self.esquema = tk.Text(self.master,state='disabled',width= 85,borderwidth=3,
+                           height=20,background='SteelBlue3')
+        self.esquema.grid(row=4, columnspan=2,padx=5, sticky='nw')
         
     
-    # def aplicarPD(self,n,estrategia):
-    #     if estrategia == 'Topdown':
+    def aplicarPD(self,n,estrategia):
+        # Posibles errores de seleccion
+        if type(n) != int:
+            return -1
+        
+        # BottomUp
+        if estrategia == 'BottomUp':
+           Fn = fibonacciBottomUp(n)
+   
+        # TopDown    
+        else:
+            Fn = fibonacciTopDown(n, [None] * (n+1))
+        self.entry_Fn.configure(state= 'normal')  
+        self.entry_Fn.delete(0,tk.END)
+        self.entry_Fn.insert(0,Fn) 
             
-    #     else:
+        
             
+    
+            
+            
+            
+        
 
 
 

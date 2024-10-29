@@ -9,8 +9,6 @@ estrategias de programación dinámica.
 """
 
 
-
-# [None] * (4+1)
 def fibonacciTopDown(n: int, Fn: list)-> int:
     """
     Cálculo del termino n de la sucesión de Fibonacci mediante el método 
@@ -70,7 +68,7 @@ def fibonacciBottomUp(n: int)-> int:
     a = 0
     b = 1
     # calculo de términos sin necesidad de una lista con n elementos
-    for i in range(0,n):
+    for i in range(0,n-1):
         c = a + b
         a = b
         b = c

@@ -10,6 +10,10 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from Fibonacci import fibonacciTopDown,fibonacciBottomUp
+from matplotlib.figure import Figure 
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+import matplotlib.pyplot as plt 
+import numpy as np
 
 class VentanaFib(tk.Frame):
     
@@ -39,16 +43,18 @@ class VentanaFib(tk.Frame):
         self.master.columnconfigure(0, weight = 1, uniform="c1")
         self.master.columnconfigure(1, weight = 1, uniform="c1")
         
-        self.master.rowconfigure(0, weight = 18, uniform="r1")
+        self.master.rowconfigure(0, weight = 20, uniform="r1")
         self.master.rowconfigure(1, weight = 9, uniform="r1")
         self.master.rowconfigure(2, weight = 9, uniform="r1")
         self.master.rowconfigure(3, weight = 9, uniform="r1")
         self.master.rowconfigure(4, weight = 50, uniform="r1")
         self.master.rowconfigure(5, weight = 8, uniform="r1")
-        self.master.rowconfigure(6, weight = 1, uniform="r1")
+        self.master.rowconfigure(6, weight = 8, uniform="r1")
+        self.master.rowconfigure(7, weight = 1, uniform="r1")
         
-        # Se crean los widgets
+        # Se crean los widgets y se grafica la espiral de fibonacci
         self.widgets()
+        self.espiral()
         
     
     
@@ -100,20 +106,62 @@ class VentanaFib(tk.Frame):
         self.entry_Fn.grid(row=3, column = 0,columnspan=2,padx= 60, sticky='w')
         
         bt_apply = tk.Button(self.master, text='Aplicar',width=10,
-                             command= lambda: self.aplicarPD(int(n.get()),
+                             command= lambda: self.aplicarPD(n.get(),
                                                             estrategia.get()))
-        bt_apply.grid(row=5, column = 0,columnspan=2,sticky='s')
+        bt_apply.grid(row=6, column = 0,columnspan=2,sticky='s')
         
-        self.esquema = tk.Text(self.master,state='disabled',width= 85,borderwidth=3,
-                           height=20,background='SteelBlue3')
-        self.esquema.grid(row=4, columnspan=2,padx=5, sticky='nw')
+        # GRÁFICO   
+        # formato y estilo
+        plt.style.use('ggplot')
+        
+        # figura
+        fig = Figure(figsize = (5, 5), 
+                 dpi = 97)
+        # se crean los ejes del gráfico
+        left = 0
+        bottom = 0 
+        width = 1
+        height = 1
+        self.ax = fig.add_axes([left, bottom, width, height])
+        
+        # Se crea el canvas de tkinter que contiene a la figura
+        self.canvas = FigureCanvasTkAgg(fig, master = self.master)   
+        self.canvas.draw() 
+        # colocar el canvas en la ventana 
+        self.canvas.get_tk_widget().grid(row = 4,columnspan=2,padx=10,sticky='nw')
+        
+        # toolbar
+        frame_toolbar = tk.Frame(self.master)
+        frame_toolbar.grid(row = 5, columnspan=2, sticky='n')
+        toolbar = NavigationToolbar2Tk(self.canvas,frame_toolbar)
+        toolbar.pack()
         
     
-    def aplicarPD(self,n,estrategia):
+    def aplicarPD(self,n: int,estrategia: str):
+        """
+        Se realiza las llamadas a los metodos TopDown y BottomUp para calcular
+        el termino de la sucesión de Fibonacci seleccionado.
+
+        Parameters
+        ----------
+        n : int
+            Termino de la sucesión de Fibonacci seleccionado.
+        estrategia : str
+            estrategia de progrmación dinámica selleccionado en el Combobox.
+
+        Returns
+        -------
+        None.
+        """
         # Posibles errores de seleccion
-        if type(n) != int:
-            return -1
+        if not n.isalnum():
+            self.entry_Fn.configure(state= 'normal') 
+            self.entry_Fn.delete(0,tk.END)
+            self.entry_Fn.insert(0,-1) 
+            self.entry_Fn.configure(state= 'disabled')
+            return
         
+        n = int(n)
         # BottomUp
         if estrategia == 'BottomUp':
            Fn = fibonacciBottomUp(n)
@@ -124,21 +172,69 @@ class VentanaFib(tk.Frame):
         self.entry_Fn.configure(state= 'normal')  
         self.entry_Fn.delete(0,tk.END)
         self.entry_Fn.insert(0,Fn) 
-            
-        
+        self.entry_Fn.configure(state= 'disabled') 
             
     
-            
-            
-            
+    def espiral(self):     
+        """
+        Se grafica la espiral de fibonacci con arcos hasta el octavo término
+        de la sucesión.
+
+        Returns
+        -------
+        None.
+
+        """
+        # ARCOS DE CIRCUNFERENCIA
+        # C1
+        x = np.linspace(0, 1, 200, endpoint=True)
+        y = 1 - np.sqrt(1 - (x-1)**2)
+        # dibuja el circulo con lineas cortas
+        self.ax.plot(x, y, color="red", markersize=1)
         
-
-
-
-
-
-
-
+        # C2 
+        y = 1 + np.sqrt(1 - (x-1)**2)
+        # dibuja el circulo con lineas cortas
+        self.ax.plot(x, y, color="red", markersize=1)
+        
+        # C3
+        x = np.linspace(1, 3, 200, endpoint=True)
+        y = np.sqrt(4 - (x-1)**2)
+        # dibuja el circulo con lineas cortas
+        self.ax.plot(x, y, color="red", markersize=1) 
+        
+        # C4
+        x = np.linspace(0, 3, 200, endpoint=True)
+        y = -np.sqrt(9 - x**2)
+        # dibuja el circulo con lineas cortas
+        self.ax.plot(x, y, color="red", markersize=1)
+        
+        # C5
+        x = np.linspace(-5, 0, 200)
+        y = 2-np.sqrt(25 - x**2)
+        # dibuja el circulo con lineas cortas
+        self.ax.plot(x, y, color="red", markersize=1)
+        
+        # C6
+        x = np.linspace(-5, 3, 200, endpoint=True)
+        y = 2+np.sqrt(64 - (x-3)**2)
+        # dibuja el circulo con lineas cortas
+        self.ax.plot(x, y, color="red", markersize=1)
+        
+        # C7
+        x = np.linspace(3, 16, 200, endpoint=True)
+        y = -3+np.sqrt(169 - (x-3)**2)
+        # dibuja el circulo con lineas cortas
+        self.ax.plot(x, y, color="red", markersize=1)
+        
+        # C8
+        x = np.linspace(-5, 16, 200, endpoint=True)
+        y = -3-np.sqrt(21**2 - (x+5)**2)
+        # dibuja el circulo con lineas cortas
+        self.ax.plot(x, y, color="red", markersize=1)
+        
+        self.canvas.draw()
+        
 
 # Ventana raiz ################################################################
 if __name__ == '__main__':
